@@ -25,7 +25,7 @@ jobs:
           git lfs install  # Enable Git LFS to manage large files
       - name: Train model and log metrics with CML
         run: |
-          python train_model.py  # Train model 
+          python knn_model.py  # Train model 
           cml run -T "Training Results" --report metrics.json  # Run CML to log metrics
       - name: Commit metrics and model results
         run: |
