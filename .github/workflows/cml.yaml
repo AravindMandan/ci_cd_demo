@@ -1,16 +1,34 @@
-name: CML
-on: [push]
+name: ML CI/CD Workflow
+on:
+  push:
+    branches:
+      - main  # Trigger workflow on push to main branch
+  pull_request:
+    branches:
+      - main  # Trigger workflow for pull requests to the main branch
 jobs:
-  train-and-report:
-    runs-on: ubuntu-latest
-    container: docker://ghcr.io/iterative/cml:0-dvc2-base1
+  train:
+    runs-on: ubuntu-latest  # Set the environment
     steps:
-      - uses: actions/checkout@v3
-      - name: Train model
-        env:
-          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout repository
+        uses: actions/checkout@v3  # Checkout code repository
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'  # Define the Python version
+      - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          python knn_model.py
-
-      
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Install Python dependencies
+      - name: Set up Git LFS
+        run: |
+          git lfs install  # Enable Git LFS to manage large files
+      - name: Train model and log metrics with CML
+        run: |
+          python train_model.py  # Train model 
+          cml run -T "Training Results" --report metrics.json  # Run CML to log metrics
+      - name: Commit metrics and model results
+        run: |
+          git add metrics.json model.pkl  # Add metrics and model to Git
+          git commit -m "Update model and metrics"
+          git push
