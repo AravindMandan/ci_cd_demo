@@ -8,11 +8,11 @@ from sklearn.metrics import accuracy_score
 # Load dataset
 data = load_iris()
 X_train, X_test, y_train, y_test = train_test_split(
-    data.data, data.target, test_size=0.3, random_state=42
+    data.data, data.target, test_size=0.2, random_state=42
 )
  
 # Train KNN model
-model = KNeighborsClassifier(n_neighbors=3)
+model = KNeighborsClassifier(n_neighbors=5)
 model.fit(X_train, y_train)
  
 # Predict and evaluate
